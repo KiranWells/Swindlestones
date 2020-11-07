@@ -40,14 +40,14 @@ def getValue(bet):
 
 def decodeBet(val):
   """Converts a number value for a bet to a list of [number, material]"""
-  return val // 4, val % 4
+  return val // 4 + 1, val % 4
 
 def stringToBet(text):
   """Converts a string of the form "1 copper" or "1 c" to a number value"""
   listvals = text.split(" ")
   if len(listvals) != 2:
     listvals = [text[0], text[1]]
-  number = int(listvals[0])
+  number = int(listvals[0]) - 1
   l = listvals[1][0].lower()
   material = 0 if l == "c" else 1 if l == "s" else 2 if l == "g" else 3 if l == "d" else -1
   if material == -1:
@@ -71,12 +71,29 @@ def play():
     pt.narrate("You both roll the dice.")
     player_hand = rolldice(player_dice_total)
     old_man_hand = rolldice(old_man_dice_total)
+    player_bet = -1
 
     pt.printDice(player_hand)
     while True:
       # the old man bets
-      old_man_bet = old_man.bet(old_man_hand)
-      pt.old_man(f"I say {old_man_bet}")
+      # print("player_hand is " + str(player_hand))
+      old_man_bet = old_man.bet(player_bet, old_man_hand)
+      if old_man_bet == -1:
+        pt.old_man("I call")
+        sleep(1)
+        pt.printDice(player_hand)
+        pt.printDice(old_man_hand)
+        valid = checkBet(player_bet, player_hand, old_man_hand)
+        if not valid:
+          pt.narrate("The old man's call was correct. You lose this round")
+          player_dice_total -= 1
+        else:
+          pt.narrate("Your bet was valid! The Old Man loses this round")
+          old_man_dice_total -= 1
+        break
+
+      num, mat = decodeBet(old_man_bet)
+      pt.old_man(f"I say {num} {names[mat]}")
 
       # the player makes a choice
       if showHelp:
@@ -94,6 +111,11 @@ def play():
       while "call" not in text_input:
         try:
           bet = stringToBet(text_input)
+          # check the player's choice is valid
+          if bet <= old_man_bet:
+            pt.printCentered("Your bet must always be greater than the previous bet", height=3)
+            text_input = pt.traveler("1 c")
+            continue
           break
         except:
           pt.printCentered("Incorrect format. Call or use '1g'", height=3)
@@ -114,24 +136,6 @@ def play():
 
       # use the player bet
       player_bet = stringToBet(text_input)
-
-      # check the player's choice is valid
-      if player_bet < old_man_bet:
-        pt.printCentered("Your bet must always be greater than the previous bet")
-      
-      # give the old man a chance to call
-      choice = old_man.callOrNot(player_bet)
-
-      if choice:
-        pt.printDice(player_hand + old_man_hand)
-        valid = checkBet(old_man_bet, player_hand, old_man_hand)
-        if valid:
-          pt.narrate("The old man's call was correct. You lose this round")
-          player_dice_total -= 1
-        else:
-          pt.narrate("Your bet was valid! The Old Man loses this round")
-          old_man_dice_total -= 1
-        break
 
       # turn off help after first loop
       showHelp = False
