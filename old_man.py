@@ -65,6 +65,8 @@ player_hand_size = 5
 #     old_man_hand.append(int(4*random.random())+1)
     
 def bet(current_bet, old_man_hand):
+  """Decides whether or not to bet based on 
+  the player's bet and the old man's hand"""
 # the old man doesn't know the player's hand, so it is not passed in
 # I now print it outside
   old_man_hand_current_round = find_possible_bets(old_man_hand)
