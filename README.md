@@ -1,8 +1,10 @@
-# Swindlestones
+Swindlestones
+=============
 
 A python game based on the game of the same name
 
-## Gameplay
+Gameplay
+--------
 
 The player and their opponent each have a pre-defined number of four-sided dice. Each side of each die is made of a different precious metal: (copper, silver, gold, and diamond).
 
