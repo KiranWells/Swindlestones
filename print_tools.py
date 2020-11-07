@@ -1,11 +1,12 @@
 """
 Print Tools for Swindlestones
------------------------------
+=============================
 
 This is a general collection of output managing tools for 
 the game Swindlestones
 
-### Attributes:
+Attributes:
+-----------
   COLORS: a list of escape characters to change the color 
   of the following text printed to console
   
@@ -17,7 +18,8 @@ the game Swindlestones
   
   screenheight: the height of the console, in lines
 
-### Methods:
+Methods:
+--------
   warn:
     print a warning
 
@@ -45,6 +47,15 @@ the game Swindlestones
   printCentered:
     print a horizontally and vertically centered clock of 
     text with a given amount of padding
+
+  old_man:
+    print the message in a dialogue format, with the old man's name and color preceding it
+
+  traveler:
+    get input from the user, prompted with the traveler's name and color preceding it
+
+  narrate:
+    print a narration message
 """
 
 from enum import Enum
@@ -66,8 +77,9 @@ class COLORS:
   CYAN      = "\033[;36m"
   WHITE     = "\033[;37m"
   ORANGE    = "\033[;33m"
+  BROWN     = "\033[2;33m"
   TURQUOISE = "\033[1;32m"
-  GRAY      = "\033[1;30m"
+  GRAY      = "\033[2;37m"
   RESET     = "\033[0m"
 
 COPPER  = 0
@@ -77,6 +89,10 @@ DIAMOND = 3
 
 screenwidth = get_terminal_size().columns
 screenheight = get_terminal_size().lines
+
+old_man_color = COLORS.ORANGE
+narrator_color = "\033[1;2;37m"
+traveler_color = COLORS.BLUE
 
 _DEBUG = True
 
@@ -224,8 +240,8 @@ def printTitle(color=COLORS.YELLOW):
     print()
   for i in range(max((int(height / 4 - 1), 0))):
     print()
-  cprint("Welcome".center(width), COLORS.GRAY)
-  cprint("Press enter to continue".center(width), COLORS.GRAY)
+  cprint("Welcome".center(width), "\033[1;2;37m")
+  cprint("Press enter to continue".center(width), "\033[1;2;37m")
   for i in range(max((int(height / 4 - 1), 0))):
     print()
 
@@ -283,3 +299,15 @@ def printCentered(
     print(center(line, width))
   for i in range(max((int(height / 2 - len(textlines) / 2), 0))):
     print()
+
+def old_man(message, end="\n"):
+  """Prints the message with the old man's name and color before it"""
+  print(old_man_color + "The Old Man: " + COLORS.RESET + message, end=end)
+
+def traveler(message):
+  """Get's input by printing the traveler's name and color before a hint, which is placed in parentheses"""
+  return input(traveler_color + f"Traveler ({message}): " + COLORS.RESET)
+
+def narrate(message):
+  """Print a message in the narration style"""
+  cprint(message, narrator_color)
