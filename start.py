@@ -16,7 +16,7 @@ names = [f"{C.BROWN}copper{C.RESET}", f"{C.GRAY}silver{C.RESET}", f"{C.YELLOW}go
 
 tutorial = f"""Swindlestones is a dice and bluffing game. The player and their opponent each have a pre-defined number of four-sided dice. Each side of each die is made of a different precious metal: ({C.BROWN}copper{C.RESET}, {C.GRAY}silver{C.RESET}, {C.YELLOW}gold{C.RESET}, and {C.LIGHTBLUE}diamond{C.RESET}).
 To start, both players secretly roll and look at their dice. Then, they each take turns either making a bet or call. To make a bet, they make a claim about how many of a certain material was rolled in total. Claims must always be “greater” than the previously made claim. A greater number or more valuable material will be defined as greater, with a greater number always taking precedence.
-Ex: One {C.LIGHTBLUE}diamond{C.RESET} is not “greater” than two {C.ORANGE}copper{C.RESET}.
+Ex: One {C.LIGHTBLUE}diamond{C.RESET} is not “greater” than two {C.BROWN}copper{C.RESET}.
 To “call” their opponent, the player must simply state “I call”. This forces the hands to be revealed, confirming or disproving their opponent’s claim. If the claim was true, the caller loses a die; if the claim was false, the opponent loses a die. After a call, the dice are re-rolled (dice are not re-rolled after a claim).
 The goal is to be the last player with dice remaining.
 Press enter to continue"""
@@ -173,9 +173,7 @@ else:
   input()
   pt.clear()
 
-# copper, silver, gold, diamond
 
-material_names = ["copper", "silver", "gold", "diamond"]
 
 while True:
   winner  = play()
