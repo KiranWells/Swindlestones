@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # By submitting this assignment, I agree to the following:
 #   "Aggies do not lie, cheat, or steal, or tolerate those who do."
 #   "I have not given or received any unauthorized aid on this assignment."
@@ -101,12 +102,12 @@ def bet(current_bet, old_man_hand):
   #  call = 1
   else:
     pass
-  if old_man_bet < current_bet:
+  if old_man_bet <= current_bet:
     # illegal bet, he needs to make a higher one
     type_d = current_bet % 4
     num_d = num_dice(current_bet)
     if num_d < 4 + old_man_hand.count(type_d):
-      old_man_bet = type_d - 1 + (num_d + 1) * 4
+      old_man_bet = type_d - 1 + (num_d) * 4
     else:
       call = 1
   if call == 1 and current_bet < 0:

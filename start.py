@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # By submitting this assignment, I agree to the following:
 #   "Aggies do not lie, cheat, or steal, or tolerate those who do."
 #   "I have not given or received any unauthorized aid on this assignment."
@@ -139,11 +140,19 @@ def play():
           if bet <= old_man_bet:
             pt.printCentered("Your bet must always be greater than the previous bet", height=3)
             text_input = pt.traveler("1 c")
+            if "concede" in text_input:
+              pt.narrate("You concede to the old man.")
+              pt.old_man("Ay, don't be a poor sport.")
+              return False
             continue
           break
         except:
           pt.printCentered("Incorrect format. Call or use '1g'", height=3)
           text_input = pt.traveler("1 c")
+          if "concede" in text_input:
+            pt.narrate("You concede to the old man.")
+            pt.old_man("Ay, don't be a poor sport.")
+            return False
 
       # handle the player's call
       if "call" in text_input:
