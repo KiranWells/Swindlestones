@@ -91,7 +91,7 @@ def bet(current_bet, old_man_hand):
     bet_size = "low bet"
    
   call = 0
-  if current_bet > 4*player_hand_size:
+  if current_bet > 4 * player_hand_size:
     call = 1
   #elif min_bet == max_bet and current_bet not in old_man_hand_current_round:
   #  call = 1
@@ -101,6 +101,14 @@ def bet(current_bet, old_man_hand):
   #  call = 1
   else:
     pass
+  if old_man_bet < current_bet:
+    # illegal bet, he needs to make a higher one
+    type_d = current_bet % 4
+    num_d = num_dice(current_bet)
+    if num_d < 4 + old_man_hand.count(type_d):
+      old_man_bet = type_d - 1 + (num_d + 1) * 4
+    else:
+      call = 1
   if call == 1 and current_bet < 0:
     # the old man can't bet because it is first round
     call = 0
