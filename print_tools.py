@@ -1,3 +1,15 @@
+# By submitting this assignment, I agree to the following:
+#   "Aggies do not lie, cheat, or steal, or tolerate those who do."
+#   "I have not given or received any unauthorized aid on this assignment."
+#
+# Names:        Griffith Thomas
+#               Anjali Kumar
+#               Eric Ballard
+#               Ana Jimenez
+# Section:      208
+# Assignment:   Final Project
+# Date:         11 14 2020
+
 """
 Print Tools for Swindlestones
 =============================
@@ -60,7 +72,8 @@ Methods:
 
 from enum import Enum
 from sys import stdout
-from os import get_terminal_size, system, name
+from os import system, name
+from shutil import get_terminal_size
 import re
 
 class COLORS:
@@ -98,11 +111,13 @@ _DEBUG = True
 
 def warn(message):
   """Print a yellow warning message to the console if DEBUG is True"""
+  message = message.replace(COLORS.RESET, COLORS.WARNING)
   if (True):
     print(COLORS.WARNING + "Warning: " + message + COLORS.RESET)
 
 def error(message):
   """Print a red error message to the console if DEBUG is True"""
+  message = message.replace(COLORS.RESET, COLORS.ERROR)
   if (True):
     print(COLORS.ERROR + "Error: " + message + COLORS.RESET)
 
@@ -258,7 +273,7 @@ def printCentered(
   The text given will be output with the given `width`, not breaking words,
   and a minimum height of `height`. These both default to the full width and
   height of the console window. The text will have a distance of
-  `padding` columns from the edge on each side (default: 0), and line spacing
+  `padding` percentage from the edge on each side (default: 0), and line spacing
   of `linespacing`, where `linespacing` is a positive integer (default: 2).
   """
   textlines = [""]
@@ -266,7 +281,9 @@ def printCentered(
   currentline = 0
   paragraphs = text.split("\n")
   
-  textwidth = width - padding * 2
+  padd_cols = int(screenwidth * padding / 100)
+
+  textwidth = width - padd_cols * 2
   
   # break the text into lines no wider than the width available from the given padding
   for n, lines in enumerate(paragraphs):
@@ -302,12 +319,15 @@ def printCentered(
 
 def old_man(message, end="\n"):
   """Prints the message with the old man's name and color before it"""
+  # message = message.replace(COLORS.RESET, old_man_color)
   print(old_man_color + "The Old Man: " + COLORS.RESET + message, end=end)
 
 def traveler(message):
   """Get's input by printing the traveler's name and color before a hint, which is placed in parentheses"""
+  # message = message.replace(COLORS.RESET, traveler_color)
   return input(traveler_color + f"Traveler ({message}): " + COLORS.RESET)
 
 def narrate(message):
   """Print a message in the narration style"""
+  message = message.replace(COLORS.RESET, narrator_color)
   cprint(message, narrator_color)

@@ -1,3 +1,16 @@
+# By submitting this assignment, I agree to the following:
+#   "Aggies do not lie, cheat, or steal, or tolerate those who do."
+#   "I have not given or received any unauthorized aid on this assignment."
+#
+# Names:        Griffith Thomas
+#               Anjali Kumar
+#               Eric Ballard
+#               Ana Jimenez
+# Section:      208
+# Assignment:   Final Project
+# Date:         11 14 2020
+
+
 import print_tools as pt
 from print_tools import COLORS as C
 import old_man
@@ -7,11 +20,6 @@ from time import sleep
 #region ###### static variables ######
 
 showHelp  = True
-old_man_bark = {
-    'call': "call",
-    'low': "low",
-    'high': "high"
-}
 names = [f"{C.BROWN}copper{C.RESET}", f"{C.GRAY}silver{C.RESET}", f"{C.YELLOW}gold{C.RESET}",  f"{C.LIGHTBLUE}diamond{C.RESET}"]
 
 tutorial = f"""Swindlestones is a dice and bluffing game. The player and their opponent each have a pre-defined number of four-sided dice. Each side of each die is made of a different precious metal: ({C.BROWN}copper{C.RESET}, {C.GRAY}silver{C.RESET}, {C.YELLOW}gold{C.RESET}, and {C.LIGHTBLUE}diamond{C.RESET}).
@@ -20,15 +28,16 @@ Ex: One {C.LIGHTBLUE}diamond{C.RESET} is not “greater” than two {C.BROWN}cop
 To “call” their opponent, the player must simply state “I call”. This forces the hands to be revealed, confirming or disproving their opponent’s claim. If the claim was true, the caller loses a die; if the claim was false, the opponent loses a die. After a call, the dice are re-rolled (dice are not re-rolled after a claim).
 The goal is to be the last player with dice remaining.
 Press enter to continue"""
-
 #endregion
 
 #region ###### function definitions ######
 
 def rolldice(length):
+  """Returns a list of random numbers to use as dice. The number of dice/ length of the list is determined by the parameter."""
   return [randint(0, 3) for i in range(length)]
 
 def countMaterials(hand):
+  """Retruns the number of a particular material in the hand. The material is determined by the parameter."""
   count = [0,0,0,0]
   for v in hand:
     count[v] += 1
@@ -62,7 +71,16 @@ def checkBet(bet, hand1, hand2):
   pt.narrate(f"There are {sums[material]} {names[material]}.")
   return number <= sums[material]
 
+def printOutput(win, loss):
+  """Outouts a files with the number of wins and losses"""
+  gameplay = open('SwindlestonesGameplay.csv', 'w')
+  gameplay.write("Game Summary\n")
+  gameplay.write(",Wins,Losses\n")
+  gameplay.write(",{},{}".format(win, loss))
+  
+
 def play():
+  """Runs the main body of the game itself."""
   player_dice_total = 5
   old_man_dice_total = 5
   global showHelp
@@ -76,10 +94,10 @@ def play():
     pt.printDice(player_hand)
     while True:
       # the old man bets
-      # print("player_hand is " + str(player_hand))
-      old_man_bet = old_man.bet(player_bet, old_man_hand)
+      old_man_bet, type_bet = old_man.bet(player_bet, old_man_hand)
       if old_man_bet == -1:
-        pt.old_man("I call")
+        pt.old_man(old_man.bark('call'))
+        pt.old_man("I call!")
         sleep(1)
         pt.printDice(player_hand)
         pt.printDice(old_man_hand)
@@ -93,7 +111,8 @@ def play():
         break
 
       num, mat = decodeBet(old_man_bet)
-      pt.old_man(f"I say {num} {names[mat]}")
+      pt.old_man(old_man.bark(type_bet))
+      pt.old_man(f"{num} {names[mat]}")
 
       # the player makes a choice
       if showHelp:
@@ -107,6 +126,11 @@ def play():
       Your hand is displayed above""", height=1, linespacing=1)
 
       text_input = pt.traveler("1 c")
+
+      if "concede" in text_input:
+        pt.narrate("You concede to the old man.")
+        pt.old_man("Ay, don't be a poor sport.")
+        return False
 
       while "call" not in text_input:
         try:
@@ -143,48 +167,83 @@ def play():
     if (old_man_dice_total < 1 or player_dice_total < 1):
       break
 
-  winner = "traveler" if old_man_dice_total == 0 else "Old Man"
-  pt.narrate(f"The game has finished. The {winner} won.")
-  return winner
+  winner = f"{pt.traveler_color}traveler{C.RESET}" if old_man_dice_total == 0 else f"{pt.old_man_color}Old Man{C.RESET}"
+  pt.narrate(f"The game has finished. The {winner} has won.")
+  return old_man_dice_total == 0
 
 #endregion
 
 #region ###### main execution ######
 
-# start with a title
-pt.printTitle()
-input()
-
-# print the introduction text
-pt.clear()
-pt.printCentered("""Hello, welcome to Swindle Stones.
-You are a traveler who has entered a tavern with a handful of coins
-You see a man in the corner motioning for you to come over""", height=10)
-pt.old_man("Have you played Swindle Stones before?")
-response = pt.traveler("y/n").lower()
-if response == "yes" or response == 'y':
-  # skip tutorial
-  showHelp = False
-else:
-  pt.old_man("Let me give you the basics, then.")
-  sleep(1)
-  pt.clear()
-  pt.printCentered(tutorial, padding=10)
+# I think that this is how you are supposed to do main code
+if __name__ == "__main__":
+  # start with a title
+  pt.printTitle()
   input()
   pt.clear()
 
+  # print description
+  pt.printCentered("""This is the game of Swindlestones, a strategic dice game based on predicting values on the table and making bets.
+  This program can:
+  generate random numbers to resemble a dice roll
+  create a tavern-like environment with dialogue and symbols
+  simulate an opponent using an AI that intuitively places challenging bets
+  allow the user to play an enjoyable game of Swindlestones 
+  output a file with the number of wins and losses
+  
+  Press enter to continue""")
+  input()
+  pt.clear()
 
+  # print the introduction text
+  pt.printCentered("""You are a traveler from a distant place, entering a tavern with only a handful of coins in your possession.
+  As you make your way through the dimly lit room, you notice the peculiar old man in the corner watching you. 
+  You meet eyes, and he quickly looks away to stare at something lying on the table in front of him.
+  Your curiosity has been sparked, you decide to approach the old man. 
+  He turns to you with a knowing look and motions to what he had previously been fixated on- some strange dice with colored faces.
+  \"Would you like to play?\"
+  Press enter to continue""", padding=10)
+  input()
+  pt.clear()
 
-while True:
-  winner  = play()
-  pt.old_man("Would you like to play again?")
-  text = pt.traveler("y/n").lower()
-  if text == "y" or text == "yes":
-    continue
+  # give the option for a tutorial
+  pt.old_man("Have you played Swindle Stones before?")
+  response = pt.traveler("y/n").lower()
+  if (response == "yes") or (response == 'y'):
+    # skip tutorial
+    showHelp = False
   else:
-    break
+    if (response == "no") or (response == "n"):
+      pt.old_man("Aye then, let me teach you a thing or two about dice!")
+    else:
+      pt.old_man("I'm not sure I understand, but I'll give you a refresher anyway")
+    sleep(1)
+    pt.clear()
+    # prints with a 10% padding
+    pt.printCentered(tutorial, padding=10)
+    input()
+    pt.clear()
 
-pt.clear()
+  wins = 0
+  losses = 0
+  while True:
+    winner = play()
+    if winner == True:
+      wins += 1
+    else:
+      losses += 1
+    pt.old_man("Would you like to play again?")
+    text = pt.traveler("y/n").lower()
+    if text == "y" or text == "yes":
+      continue
+    else:
+      printOutput(wins, losses)
+      break
+
+  pt.clear()
+  pt.printCentered("Your wins and losses have been printed to SwindlestonesGameplay.csv\nPress Enter to exit", padding=20)
+  input()
+  pt.clear()
 
 #endregion
 
