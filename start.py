@@ -10,7 +10,6 @@
 # Assignment:   Final Project
 # Date:         11 14 2020
 
-
 import print_tools as pt
 from print_tools import COLORS as C
 import old_man
