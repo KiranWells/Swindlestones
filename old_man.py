@@ -51,27 +51,44 @@ def find_possible_bets(hand):
   """creates a list of bets for the round"""
   possible_bets = []
   for i in range (0, len(hand)):
-      for j in range (1, 5):
-          if i < list.count(hand, j-1):
+      for j in range (0, 4):
+          if i < hand.count(j):
               possible_bets.append(j + i*4)
           else:
-              possible_bets.append(0)
-  for i in range(0, 4*len(hand)):
-      possible_bets.append(0)
+              possible_bets.append(-1)
+  # for i in range(0, 4*len(hand)):
+  #     possible_bets.append(0)
   return possible_bets
 
+<<<<<<< HEAD
 # variable redefinition
 old_man_hand_size = 5
 player_hand_size = 5
+=======
+previous_player_bet = 0
+previous_old_man_bet = 0
+>>>>>>> a4e791119bc384146ff04459bf432f13a049c23c
     
 def bet(current_bet, old_man_hand):
   """Decides whether or not to bet based on 
   the player's bet and the old man's hand"""
 # the old man doesn't know the player's hand, so it is not passed in
+  global previous_old_man_bet
+  global previous_player_bet
   old_man_hand_current_round = find_possible_bets(old_man_hand)
+<<<<<<< HEAD
   if random.random() > 0.5:
     try:
       old_man_hand_current_round[current_bet + 3] = current_bet + 4*int(random.random()*2+1)
+=======
+  # print(old_man_hand_current_round)
+
+  # code to attempt a bluff
+  if random.random() > 0.9:
+    # print("bluffing")
+    try:
+      old_man_hand_current_round[current_bet + 4] = current_bet + 4 #*int(random.random()*2+1)
+>>>>>>> a4e791119bc384146ff04459bf432f13a049c23c
     except:
       pass
 
@@ -82,6 +99,8 @@ def bet(current_bet, old_man_hand):
     if value > current_bet and value < min_bet:
       min_bet = value
       break
+  # print("max", max_bet)
+  # print("min", min_bet)
   
   if random.random() > 0.7:
     old_man_bet = max_bet
@@ -91,30 +110,79 @@ def bet(current_bet, old_man_hand):
     bet_size = "low bet"
    
   call = 0
+
+  # impossible claim fix
   if current_bet > 4 * player_hand_size:
+<<<<<<< HEAD
     call = 1
   #elif min_bet == max_bet and current_bet not in old_man_hand_current_round:
   #  call = 1
+=======
+    # print("calltest")
+    mat_type = current_bet % 4
+    num_of_old_man = old_man_hand.count(mat_type)
+    if current_bet // 4 > player_hand_size + num_of_old_man - 1:
+      call = 1
+>>>>>>> a4e791119bc384146ff04459bf432f13a049c23c
   elif old_man_bet == 0:
     call = 1
-  #elif max_bet == current_bet:
-  #  call = 1
   else:
     pass
+<<<<<<< HEAD
   if old_man_bet < current_bet:
     # illegal bet, he needs to make a higher one
     type_d = current_bet % 4
     num_d = num_dice(current_bet)
     if num_d < 4 + old_man_hand.count(type_d):
       old_man_bet = type_d - 1 + (num_d + 1) * 4
-    else:
+=======
+  
+  # recognize a one-up
+  if current_bet // 4 == previous_old_man_bet // 4 + 1 and current_bet % 4 == previous_old_man_bet % 4:
+    # print("oneup")
+    if current_bet // 4 > old_man_hand.count(current_bet % 4):
       call = 1
+  
+  # illegal bet fix
+  if old_man_bet <= current_bet:
+    if max_bet > current_bet:
+      old_man_bet = max_bet
+>>>>>>> a4e791119bc384146ff04459bf432f13a049c23c
+    else:
+      # print("myfix")
+      # illegal bet, he needs to make a higher one
+      counts = [old_man_hand.count(i) for i in range(4)]
+      # add the player's bet to the known dice counts
+      # / 1.5 to offset the players bet since it may be false
+      # counts[current_bet % 4] += current_bet // 4 / 1.5
+      type_d = counts.index(max(counts))
+      num_d = current_bet // 4
+      if current_bet // 4 < player_hand_size + old_man_hand.count(current_bet % 4) - 2:
+        if random.random() > 0.1:
+          old_man_bet = type_d + (num_d + 1) * 4
+        else:
+          old_man_bet = current_bet + random.randint(1,3)
+      else:
+        call = 1
+
+  # first round fix
   if call == 1 and current_bet < 0:
-    # the old man can't bet because it is first round
+    # the old man can't call because it is first round
     call = 0
-    min_bet = min_bet if min_bet > current_bet else current_bet + 1
+    old_man_bet = min_bet if min_bet > current_bet else current_bet + 1
+
+  # update previous 
+  previous_old_man_bet = old_man_bet
+  previous_player_bet = current_bet
+
+  if old_man_bet == min_bet:
+    bet_size = "low bet"
+  else:
+    bet_size = "high bet"
+
   if call == 1:
     bet_size = "call"
+  
   return old_man_bet if not call else -1, bet_size
 
 def get_rand_from_list(l):
