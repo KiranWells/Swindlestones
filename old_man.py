@@ -60,19 +60,16 @@ def find_possible_bets(hand):
   for i in range(0, 4*len(hand)):
       possible_bets.append(0)
   return possible_bets
-
-# variable redefinition
-old_man_hand_size = 5
-player_hand_size = 5
     
-def bet(current_bet, old_man_hand):
+def bet(current_bet, old_man_hand, player_hand_size):
   """Decides whether or not to bet based on 
   the player's bet and the old man's hand"""
 # the old man doesn't know the player's hand, so it is not passed in
   old_man_hand_current_round = find_possible_bets(old_man_hand)
-  if random.random() > 0.5:
+  if random.random() > 0.9:
+    # print("bluffing")
     try:
-      old_man_hand_current_round[current_bet + 3] = current_bet + 4*int(random.random()*2+1)
+      old_man_hand_current_round[current_bet + 4] = current_bet + 4*int(random.random()*2+1)
     except:
       pass
 
@@ -84,7 +81,7 @@ def bet(current_bet, old_man_hand):
       min_bet = value
       break
   
-  if random.random() > 0.7:
+  if random.random() > 0.8:
     old_man_bet = max_bet
     bet_size = "high bet"
   else:
@@ -93,7 +90,11 @@ def bet(current_bet, old_man_hand):
    
   call = 0
   if current_bet > 4 * player_hand_size:
-    call = 1
+    # print("calltest")
+    mat_type = current_bet % 4
+    num_of_old_man = old_man_hand.count(mat_type)
+    if current_bet // 4 > player_hand_size + num_of_old_man - 1:
+      call = 1
   #elif min_bet == max_bet and current_bet not in old_man_hand_current_round:
   #  call = 1
   elif old_man_bet == 0:
@@ -103,11 +104,16 @@ def bet(current_bet, old_man_hand):
   else:
     pass
   if old_man_bet <= current_bet:
+    print("myfix")
     # illegal bet, he needs to make a higher one
-    type_d = current_bet % 4
-    num_d = num_dice(current_bet)
-    if num_d < 4 + old_man_hand.count(type_d):
-      old_man_bet = type_d - 1 + (num_d) * 4
+    counts = [old_man_hand.count(i) for i in range(4)]
+    # add the player's bet to the known dice counts
+    # / 1.5 to offset the players bet since it may be false
+    counts[current_bet % 4] += current_bet // 4 / 1.5
+    type_d = counts.index(max(counts))
+    num_d = current_bet // 4
+    if current_bet // 4 < player_hand_size + old_man_hand.count(current_bet % 4):
+      old_man_bet = type_d + (num_d + 1) * 4
     else:
       call = 1
   if call == 1 and current_bet < 0:

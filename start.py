@@ -95,7 +95,7 @@ def play():
     pt.printDice(player_hand)
     while True:
       # the old man bets
-      old_man_bet, type_bet = old_man.bet(player_bet, old_man_hand)
+      old_man_bet, type_bet = old_man.bet(player_bet, old_man_hand, len(player_hand))
       if old_man_bet == -1:
         pt.old_man(old_man.bark('call'))
         pt.old_man("I call!")
